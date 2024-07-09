@@ -18,30 +18,21 @@ logger.addHandler(console_handler)
 
 
 class ToyRetriever(BaseRetriever):
-    """A toy retriever that contains the top k documents that contain the user query.
-
-    This retriever only implements the sync method _get_relevant_documents.
-
-    If the retriever were to involve file access or network access, it could benefit
-    from a native async implementation of `_aget_relevant_documents`.
-
-    As usual, with Runnables, there's a default async implementation that's provided
-    that delegates to the sync implementation running on another thread.
+    """Custom retriever adapted from LangChain Retriever documentation, it stores documents in memory and returns the top k matches for each query.
     """
 
     documents: List[Document]
-    """List of documents to retrieve from."""
     k: int
-    """Number of top results to return"""
 
     def _get_relevant_documents(
         self, query: str, *, run_manager: CallbackManagerForRetrieverRun
     ) -> List[Document]:
-        """Sync implementations for retriever."""
         start = time.time()
         logger.info(f"Processing query: '{query}'")
+        
         # Simulating a 3 seconds delay for the response
         time.sleep(3)
+        
         matching_documents = []
         for document in self.documents:
             if len(matching_documents) > self.k:
@@ -55,7 +46,7 @@ class ToyRetriever(BaseRetriever):
 
 
 if __name__ == "__main__":
-    # Adapted from Custom Retriever + 
+    # Adapted from Custom Retriever documentation: https://python.langchain.com/v0.1/docs/modules/data_connection/retrievers/custom_retriever/
     documents = [
         Document(
             page_content="Dogs are great companions, known for their loyalty and friendliness.",
